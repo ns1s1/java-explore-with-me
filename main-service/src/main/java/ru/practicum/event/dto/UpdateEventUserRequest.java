@@ -9,7 +9,6 @@ import ru.practicum.event.model.StateAction;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
@@ -29,7 +28,7 @@ public class UpdateEventUserRequest {
     @Size(min = 20, max = 7000)
     private String description;
 
-    @Future
+    @FutureOrPresent
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 

@@ -26,7 +26,7 @@ public class NewEventDto {
     private String description;
 
     @NotNull
-    @Future
+    @FutureOrPresent
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
