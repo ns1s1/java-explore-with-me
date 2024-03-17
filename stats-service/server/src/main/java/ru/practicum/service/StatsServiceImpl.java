@@ -31,20 +31,19 @@ public class StatsServiceImpl implements StatsService {
     public List<ViewStatsDto> getStatistics(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         if (end.isBefore(start)) {
             throw new ValidationException("Время завершения раньше начала");
-        } else if (start.isEqual(end)) {
-            throw new ValidationException("Время завершения равно времени начала");
         }
 
         if (unique) {
-            if (uris == null || uris.isEmpty()) {
+            if (uris == null) {
                 return statsRepository.getUniqueIpRequestsWithoutUri(start, end);
             }
             return statsRepository.getUniqueIpRequestsWithUri(start, end, uris);
         } else {
-            if (uris == null || uris.isEmpty()) {
+            if (uris == null) {
                 return statsRepository.getAllRequestsWithoutUri(start, end);
             }
             return statsRepository.getAllRequestsWithUri(start, end, uris);
         }
     }
+
 }

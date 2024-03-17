@@ -159,7 +159,6 @@ public class EventServiceImpl implements EventService {
         } else {
             page = PageRequest.of(from / size, size, Sort.by("eventDate"));
         }
-        addStatsClient(httpServletRequest);
 
         Page<Event> eventsPage = eventRepository.findAll(where(hasText(text))
                 .and(hasCategories(categories))
@@ -168,6 +167,7 @@ public class EventServiceImpl implements EventService {
                 .and(hasRangeEnd(rangeEnd))
                 .and(hasAvailable(onlyAvailable)), page);
 
+        addStatsClient(httpServletRequest);
         Map<Long, Long> viewStatsMap = getViews(eventsPage.toList());
         for (Event event : eventsPage.toList()) {
             Long viewsFromStatistic = viewStatsMap.getOrDefault(event.getId(), 0L);
