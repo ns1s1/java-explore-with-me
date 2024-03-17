@@ -19,6 +19,7 @@ public class StatsClient extends BaseClient {
     private static final String PATCH = "/stats?start={start}&end={end}&uris={uris}&unique={unique}";
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     @Autowired
     public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
