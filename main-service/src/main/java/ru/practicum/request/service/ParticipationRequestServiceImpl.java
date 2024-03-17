@@ -84,8 +84,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new ValidationException("User с данным id не является инициатором");
         }
 
-        List<ParticipationRequest> participationRequests = participationRequestRepository.
-                findAllByIdInAndAndEventId(eventRequestStatusUpdateRequest.getRequestIds(), eventId);
+        List<ParticipationRequest> participationRequests = participationRequestRepository
+                .findAllByIdInAndAndEventId(eventRequestStatusUpdateRequest.getRequestIds(), eventId);
 
         if (participationRequests.size() != eventRequestStatusUpdateRequest.getRequestIds().size()) {
             throw new NotFoundException(

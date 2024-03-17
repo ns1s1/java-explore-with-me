@@ -1,9 +1,7 @@
 package ru.practicum.event.model;
 
 import lombok.*;
-import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.model.Category;
-import ru.practicum.user.dto.UserShortDto;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;

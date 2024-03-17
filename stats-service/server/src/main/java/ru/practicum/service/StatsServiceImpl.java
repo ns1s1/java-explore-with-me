@@ -23,7 +23,7 @@ public class StatsServiceImpl implements StatsService {
     @Override
     @Transactional
     public void create(EndpointHitDto endpointHitDto) {
-       statsRepository.save(endpointHitMapper.convertToEndpointHit(endpointHitDto));
+        statsRepository.save(endpointHitMapper.convertToEndpointHit(endpointHitDto));
     }
 
     @Override
