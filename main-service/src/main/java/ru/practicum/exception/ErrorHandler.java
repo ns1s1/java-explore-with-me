@@ -26,7 +26,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError handlerIncorrectParametersException(final BadRequestException ex) {
+    public ApiError handlerBadRequestExceptionException(final BadRequestException ex) {
         log.error("Получен статус 400 BAD_REQUESt {}", ex.getMessage(), ex);
         return new ApiError(
                 ex.getMessage(),
