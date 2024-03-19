@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.event.model.EventState;
 import ru.practicum.user.dto.UserShortDto;
@@ -27,6 +28,7 @@ public class EventFullDto {
     private Long confirmedRequests;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @CreationTimestamp
     private LocalDateTime createdOn;
 
 
@@ -39,14 +41,14 @@ public class EventFullDto {
 
     private LocationDto location;
 
-    private Boolean paid;
+    private boolean paid;
 
     private Long participantLimit;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
 
-    private Boolean requestModeration;
+    private boolean requestModeration;
 
     private EventState state;
 

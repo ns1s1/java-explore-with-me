@@ -31,8 +31,8 @@ public class AdminEventController {
                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
                                              @RequestParam(name = "rangeEnd", required = false)
                                              @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
-                                             @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                             @RequestParam(name = "size", defaultValue = "10") Integer size) {
+                                             @RequestParam(name = "from", defaultValue = "0") int from,
+                                             @RequestParam(name = "size", defaultValue = "10") int size) {
 
         return eventService.getAdminEvents(users, states, categories, rangeStart, rangeEnd, from, size);
     }

@@ -1,6 +1,8 @@
 package ru.practicum.request.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import ru.practicum.event.model.Event;
 import ru.practicum.user.model.User;
 
@@ -21,7 +23,8 @@ public class ParticipationRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime created;
 
     @ManyToOne(fetch = FetchType.LAZY)

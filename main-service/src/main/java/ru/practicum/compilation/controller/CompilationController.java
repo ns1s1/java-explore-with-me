@@ -19,8 +19,8 @@ public class CompilationController {
 
     @GetMapping
     public List<CompilationDto> findAll(@RequestParam(required = false) Boolean pinned,
-                                        @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
-                                        @RequestParam(defaultValue = "10") @Positive Integer size) {
+                                        @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                        @RequestParam(defaultValue = "10") @Positive int size) {
         return compilationService.findAll(pinned, from, size);
     }
 

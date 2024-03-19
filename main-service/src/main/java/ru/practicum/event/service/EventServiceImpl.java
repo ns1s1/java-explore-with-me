@@ -53,16 +53,7 @@ public class EventServiceImpl implements EventService {
         User initiator = getUserById(userId);
         Category category = getCategoryById(newEventDto.getCategory());
 
-        event.setInitiator(initiator);
-        if (newEventDto.getPaid() == null) {
-            event.setPaid(false);
-        }
-        if (newEventDto.getRequestModeration() == null) {
-            event.setRequestModeration(true);
-        }
-        event.setCreatedOn(LocalDateTime.now());
-        event.setCategory(category);
-        event.setState(EventState.PENDING);
+        setEventFields(event, newEventDto, initiator, category);
 
         return eventMapper.convertToEventFullDto(eventRepository.save(event));
     }
@@ -76,14 +67,14 @@ public class EventServiceImpl implements EventService {
         if (updateEventAdminRequest.getStateAction() != null) {
             switch (updateEventAdminRequest.getStateAction()) {
                 case REJECT_EVENT:
-                    if (event.getState().equals(EventState.PUBLISHED)) {
+                    if (event.getState() == EventState.PUBLISHED) {
                         throw new ValidationException(
                                 "Событие нельзя опубликовать, если оно не находится в состоянии ожидания");
                     }
                     event.setState(EventState.CANCELED);
                     break;
                 case PUBLISH_EVENT:
-                    if (!event.getState().equals(EventState.PENDING)) {
+                    if (event.getState() != EventState.PENDING) {
                         throw new ValidationException(
                                 "Мероприятие может быть отклонено только, если оно еще не опубликовано");
                     }
@@ -109,9 +100,6 @@ public class EventServiceImpl implements EventService {
         User user = getUserById(userId);
         event.setInitiator(user);
 
-        if (updateEventUserRequest.getPaid() != null) {
-            event.setPaid(updateEventUserRequest.getPaid());
-        }
         if (updateEventUserRequest.getRequestModeration() != null) {
             event.setRequestModeration(updateEventUserRequest.getRequestModeration());
         }
@@ -119,7 +107,7 @@ public class EventServiceImpl implements EventService {
             Category category = getCategoryById(updateEventUserRequest.getCategory());
             event.setCategory(category);
         }
-        event.setCreatedOn(LocalDateTime.now());
+
         event.setState(EventState.PENDING);
 
         if (updateEventUserRequest.getStateAction() != null) {
@@ -136,7 +124,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventShortDto> getUserEvents(Long userId, Integer from, Integer size) {
+    public List<EventShortDto> getUserEvents(Long userId, int from, int size) {
         Pageable page = PageRequest.of(from / size, size, Sort.by("id").descending());
 
         return eventRepository.findAllByInitiatorId(userId, page).stream()
@@ -146,7 +134,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventShortDto> getAll(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
-                                      LocalDateTime rangeEnd, Boolean onlyAvailable, Integer from, Integer size,
+                                      LocalDateTime rangeEnd, Boolean onlyAvailable, int from, int size,
                                       EventSort sort, HttpServletRequest httpServletRequest) {
 
         if ((rangeStart != null && rangeEnd != null) && (rangeStart.isAfter(rangeEnd) || rangeStart.isEqual(rangeEnd))) {
@@ -154,7 +142,7 @@ public class EventServiceImpl implements EventService {
         }
 
         Pageable page;
-        if (sort.equals(EventSort.VIEWS)) {
+        if (sort == EventSort.VIEWS) {
             page = PageRequest.of(from / size, size, Sort.by("views"));
         } else {
             page = PageRequest.of(from / size, size, Sort.by("eventDate"));
@@ -183,7 +171,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventFullDto> getAdminEvents(List<Long> users, List<EventState> states, List<Long> categories,
                                              LocalDateTime rangeStart, LocalDateTime rangeEnd,
-                                             Integer from, Integer size) {
+                                             int from, int size) {
         if ((rangeStart != null && rangeEnd != null) && (rangeEnd.isBefore(rangeStart))) {
             throw new BadRequestException("Дата окончания не может быть раньше даты начала");
         }
@@ -322,5 +310,22 @@ public class EventServiceImpl implements EventService {
         if (updateEventAdminRequest.getPaid() != null) {
             event.setPaid(updateEventAdminRequest.getPaid());
         }
+    }
+
+    private void setEventFields(Event event, NewEventDto newEventDto, User initiator, Category category) {
+        if (newEventDto.getPaid() == null) {
+            event.setPaid(false);
+        }
+        if (newEventDto.getRequestModeration() == null) {
+            event.setRequestModeration(true);
+        }
+        if (newEventDto.getParticipantLimit() == null) {
+            event.setParticipantLimit(0L);
+        }
+        event.setInitiator(initiator);
+        event.setConfirmedRequests(0L);
+        event.setCategory(category);
+        event.setState(EventState.PENDING);
+        event.setViews(0L);
     }
 }

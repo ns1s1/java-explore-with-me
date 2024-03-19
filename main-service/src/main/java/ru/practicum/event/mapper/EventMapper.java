@@ -10,7 +10,6 @@ import ru.practicum.event.model.Event;
 @Mapper(componentModel = "spring")
 public interface EventMapper {
 
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "confirmedRequests", ignore = true)
     @Mapping(target = "createdOn", ignore = true)

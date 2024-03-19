@@ -24,9 +24,7 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
-
     private final CategoryMapper categoryMapper;
-
     private final EventRepository eventRepository;
 
 
@@ -78,8 +76,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> findAll(Integer from, Integer size) {
-        Pageable page = PageRequest.of(from / size, size, Sort.by("id").ascending());
+    public List<CategoryDto> findAll(int from, int size) {
+        Pageable page = PageRequest.of(from / size, size, Sort.by("id").descending());
 
         return categoryRepository.findAll(page).stream()
                 .map(categoryMapper::convertToCategoryDto)

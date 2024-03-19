@@ -18,7 +18,6 @@ import ru.practicum.request.repository.ParticipationRequestRepository;
 import ru.practicum.user.model.User;
 import ru.practicum.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,12 +35,10 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     public ParticipationRequestDto create(Long userId, Long eventId) {
         Event event = getEventById(eventId);
         User requester = getUserById(userId);
-        LocalDateTime createdOn = LocalDateTime.now();
 
         validateNewRequest(event, userId, eventId);
 
         ParticipationRequest participationRequest = new ParticipationRequest();
-        participationRequest.setCreated(createdOn);
         participationRequest.setRequester(requester);
         participationRequest.setEvent(event);
         participationRequest.setStatus(ParticipationRequestStatus.PENDING);
@@ -77,8 +74,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     public EventRequestStatusUpdateResult updateEventRequests(
             Long userId, Long eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
 
-        Event event = eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(() -> new NotFoundException(
-                "Event c id = " + eventId + " и Userid = " + userId + " не найден"));
+        Event event = eventRepository.findByIdAndInitiatorId(eventId, userId).orElseThrow(
+                () -> new NotFoundException(String.format("Event c id = %d и Userid = %d не найден", eventId, userId)));
 
         if (!event.getInitiator().getId().equals(userId)) {
             throw new ValidationException("User с данным id не является инициатором");
@@ -93,7 +90,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         for (ParticipationRequest request : participationRequests) {
-            if (!request.getStatus().equals(ParticipationRequestStatus.PENDING)) {
+            if (request.getStatus() != ParticipationRequestStatus.PENDING) {
                 throw new ValidationException("Только запросы со статусом «PENDING» могут быть приняты или отклонены");
             }
         }
@@ -102,13 +99,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();
 
         if (eventRequestStatusUpdateRequest.getStatus() == EventStatus.REJECTED) {
-            rejectedRequests = participationRequests.stream()
-                    .map(participationRequest -> {
-                        participationRequest.setStatus(ParticipationRequestStatus.REJECTED);
-                        participationRequestRepository.save(participationRequest);
-                        return requestMapper.convertToParticipationRequestDto(participationRequest);
-                    })
-                    .collect(Collectors.toList());
+            rejectedRequests = rejectParticipationRequests(participationRequests);
             return new EventRequestStatusUpdateResult(confirmedRequests, rejectedRequests);
         }
 
@@ -122,18 +113,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         if (event.getConfirmedRequests() >= event.getParticipantLimit()) {
             throw new ValidationException("Достигнуто максимальное количество участников");
         }
-        for (ParticipationRequest participationRequest : participationRequests) {
-            if (event.getConfirmedRequests() < event.getParticipantLimit()) {
-                participationRequest.setStatus(ParticipationRequestStatus.CONFIRMED);
-                participationRequestRepository.save(participationRequest);
-                event.setConfirmedRequests(event.getConfirmedRequests() + 1);
-                confirmedRequests.add(requestMapper.convertToParticipationRequestDto(participationRequest));
-            } else {
-                participationRequest.setStatus(ParticipationRequestStatus.REJECTED);
-                participationRequestRepository.save(participationRequest);
-                rejectedRequests.add(requestMapper.convertToParticipationRequestDto(participationRequest));
-            }
-        }
+        processEventParticipationRequests(event, participationRequests, confirmedRequests, rejectedRequests);
         eventRepository.save(event);
 
         return new EventRequestStatusUpdateResult(confirmedRequests, rejectedRequests);
@@ -142,9 +122,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     public List<ParticipationRequestDto> getRequestByUserId(Long userId) {
         getUserById(userId);
-        List<ParticipationRequest> requests = participationRequestRepository.findAllByRequesterId(userId);
 
-        return requests.stream()
+        return participationRequestRepository.findAllByRequesterId(userId).stream()
                 .map(requestMapper::convertToParticipationRequestDto)
                 .collect(Collectors.toList());
     }
@@ -176,11 +155,41 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         if (event.getParticipantLimit() != 0 && event.getParticipantLimit() - event.getConfirmedRequests() <= 0) {
             throw new ValidationException("Превышен лимит участников события");
         }
-        if (!event.getState().equals(EventState.PUBLISHED)) {
+        if (event.getState() != EventState.PUBLISHED) {
             throw new ValidationException("Событие не опубликовано");
         }
         if (participationRequestRepository.existsByRequesterIdAndEventId(userId, eventId)) {
             throw new ValidationException("Попытка добаления дубликата");
         }
     }
+
+    private List<ParticipationRequestDto> rejectParticipationRequests(List<ParticipationRequest> participationRequests) {
+
+        return participationRequests.stream()
+                .map(participationRequest -> {
+                    participationRequest.setStatus(ParticipationRequestStatus.REJECTED);
+                    participationRequestRepository.save(participationRequest);
+                    return requestMapper.convertToParticipationRequestDto(participationRequest);
+                })
+                .collect(Collectors.toList());
+    }
+
+    private void processEventParticipationRequests(Event event, List<ParticipationRequest> participationRequests,
+                                                   List<ParticipationRequestDto> confirmedRequests,
+                                                   List<ParticipationRequestDto> rejectedRequests) {
+
+        for (ParticipationRequest participationRequest : participationRequests) {
+            if (event.getConfirmedRequests() < event.getParticipantLimit()) {
+                participationRequest.setStatus(ParticipationRequestStatus.CONFIRMED);
+                participationRequestRepository.save(participationRequest);
+                event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+                confirmedRequests.add(requestMapper.convertToParticipationRequestDto(participationRequest));
+            } else {
+                participationRequest.setStatus(ParticipationRequestStatus.REJECTED);
+                participationRequestRepository.save(participationRequest);
+                rejectedRequests.add(requestMapper.convertToParticipationRequestDto(participationRequest));
+            }
+        }
+    }
+
 }

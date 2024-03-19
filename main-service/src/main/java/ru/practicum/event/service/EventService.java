@@ -16,14 +16,14 @@ public interface EventService {
 
     EventFullDto updateUserEventById(Long eventId, Long userId, UpdateEventUserRequest eventDto);
 
-    List<EventShortDto> getUserEvents(Long userId, Integer from, Integer size);
+    List<EventShortDto> getUserEvents(Long userId, int from, int size);
 
     List<EventShortDto> getAll(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
-                               LocalDateTime rangeEnd, Boolean onlyAvailable, Integer from, Integer size,
+                               LocalDateTime rangeEnd, Boolean onlyAvailable, int from, int size,
                                EventSort sort, HttpServletRequest request);
 
     List<EventFullDto> getAdminEvents(List<Long> users, List<EventState> states, List<Long> categories,
-                                      LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size);
+                                      LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size);
 
     EventFullDto getUserEventById(Long userId, Long eventId);
 

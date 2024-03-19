@@ -27,7 +27,7 @@ public class EventShortDto {
 
     private UserShortDto initiator;
 
-    private Boolean paid;
+    private boolean paid;
 
     private String title;
 

@@ -17,8 +17,8 @@ public class CategoryController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<CategoryDto> findAll(@RequestParam(defaultValue = "0") Integer from,
-                                     @RequestParam(defaultValue = "10") Integer size) {
+    public List<CategoryDto> findAll(@RequestParam(defaultValue = "0") int from,
+                                     @RequestParam(defaultValue = "10") int size) {
 
         return categoryService.findAll(from, size);
     }

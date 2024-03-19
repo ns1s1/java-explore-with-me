@@ -1,6 +1,7 @@
 package ru.practicum.event.model;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import ru.practicum.category.model.Category;
 import ru.practicum.user.model.User;
 
@@ -11,9 +12,9 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "events")
-@AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = {"category", "initiator", "location"})
+@AllArgsConstructor
+@ToString(exclude = {"category", "location"})
 public class Event {
 
     @Id
@@ -25,25 +26,26 @@ public class Event {
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
-    private Long confirmedRequests = 0L;
+    private Long confirmedRequests;
 
     @Column(name = "created_on")
+    @CreationTimestamp
     private LocalDateTime createdOn;
 
     private String description;
 
     private LocalDateTime eventDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User initiator;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id")
     private Location location;
 
-    private Boolean paid;
+    private boolean paid;
 
-    private Long participantLimit = 0L;
+    private Long participantLimit;
 
     private LocalDateTime publishedOn;
 
@@ -54,6 +56,14 @@ public class Event {
 
     private String title;
 
-    private Long views = 0L;
-
+    private Long views;
 }
+
+
+
+
+
+
+
+
+

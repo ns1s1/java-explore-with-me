@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class NewCompilationDto {
 
-    private Boolean pinned = false;
+    private Boolean pinned;
 
     @NotBlank
     @Size(min = 1, max = 50)

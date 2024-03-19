@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findAll(List<Long> ids, Integer from, Integer size) {
+    public List<UserDto> findAll(List<Long> ids, int from, int size) {
         Pageable page = PageRequest.of(from / size, size, Sort.by("id").ascending());
 
         if (ids == null) {

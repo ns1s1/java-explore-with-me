@@ -12,7 +12,6 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class UserShortDto {
 
-
     private Long id;
 
     @Email

@@ -34,7 +34,7 @@ public class UpdateEventUserRequest {
 
     private Location location;
 
-    private Boolean paid;
+    private boolean paid;
 
     @PositiveOrZero
     private Long participantLimit;

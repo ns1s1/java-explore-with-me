@@ -16,5 +16,5 @@ public interface CompilationService {
 
     void delete(Long compilationId);
 
-    List<CompilationDto> findAll(Boolean pinned, Integer from, Integer size);
+    List<CompilationDto> findAll(Boolean pinned, int from, int size);
 }

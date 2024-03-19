@@ -24,9 +24,7 @@ import java.util.stream.Collectors;
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
-
     private final CompilationMapper compilationMapper;
-
     private final EventRepository eventRepository;
 
 
@@ -66,7 +64,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    public List<CompilationDto> findAll(Boolean pinned, Integer from, Integer size) {
+    public List<CompilationDto> findAll(Boolean pinned, int from, int size) {
         Pageable page = PageRequest.of(from / size, size, Sort.by("id").descending());
 
         if (pinned != null) {
