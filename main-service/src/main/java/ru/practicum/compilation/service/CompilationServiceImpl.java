@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.NewCompilationDto;
 import ru.practicum.compilation.dto.UpdateCompilationRequest;
@@ -21,13 +22,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
     private final CompilationMapper compilationMapper;
     private final EventRepository eventRepository;
 
-
+    @Transactional
     @Override
     public CompilationDto create(NewCompilationDto newCompilationDto) {
         Compilation compilation = compilationMapper.convertToCompilation(newCompilationDto);
@@ -40,6 +42,7 @@ public class CompilationServiceImpl implements CompilationService {
         return compilationMapper.convertToCompilationDto(compilationRepository.save(compilation));
     }
 
+    @Transactional
     @Override
     public CompilationDto update(Long compilationId, UpdateCompilationRequest updateCompilationRequest) {
         Compilation compilation = getCompilationById(compilationId);
@@ -80,13 +83,14 @@ public class CompilationServiceImpl implements CompilationService {
         }
     }
 
+    @Transactional
     @Override
     public void delete(Long compilationId) {
         getCompilationById(compilationId);
         compilationRepository.deleteById(compilationId);
     }
 
-    public Compilation getCompilationById(Long compilationId) {
+    private Compilation getCompilationById(Long compilationId) {
         return compilationRepository.findById(compilationId)
                 .orElseThrow(() -> new NotFoundException("Подборка событий не найдена"));
     }

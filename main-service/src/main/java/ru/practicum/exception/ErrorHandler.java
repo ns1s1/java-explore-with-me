@@ -1,6 +1,7 @@
 package ru.practicum.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -35,9 +36,20 @@ public class ErrorHandler {
                 LocalDateTime.now());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handlerValidationException(final ValidationException ex) {
+        log.debug("Получен статус 409 CONFLICT {}", ex.getMessage());
+        return new ApiError(
+                ex.getMessage(),
+                "Integrity constraint has been violated",
+                HttpStatus.CONFLICT.name(),
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler({})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handlerDataIntegrityViolationException(final DataIntegrityViolationException ex) {
         log.debug("Получен статус 409 CONFLICT {}", ex.getMessage());
         return new ApiError(
                 ex.getMessage(),

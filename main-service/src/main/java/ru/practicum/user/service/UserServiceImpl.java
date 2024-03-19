@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.user.dto.NewUserRequestDto;
 import ru.practicum.user.model.User;
@@ -20,12 +21,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
 
+    @Transactional
     @Override
     public UserDto create(NewUserRequestDto newUserRequestDto) {
         User user = userMapper.convertToUser(newUserRequestDto);
@@ -55,6 +58,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Transactional
     @Override
     public void delete(Long userId) {
         try {

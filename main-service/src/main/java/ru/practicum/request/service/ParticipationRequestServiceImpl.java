@@ -2,6 +2,7 @@ package ru.practicum.request.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.event.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.event.dto.EventRequestStatusUpdateResult;
 import ru.practicum.request.mapper.RequestMapper;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ParticipationRequestServiceImpl implements ParticipationRequestService {
 
     private final EventRepository eventRepository;
@@ -31,6 +33,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private final ParticipationRequestRepository participationRequestRepository;
     private final RequestMapper requestMapper;
 
+    @Transactional
     @Override
     public ParticipationRequestDto create(Long userId, Long eventId) {
         Event event = getEventById(eventId);
@@ -53,6 +56,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         return requestMapper.convertToParticipationRequestDto(participationRequestRepository.save(participationRequest));
     }
 
+    @Transactional
     @Override
     public ParticipationRequestDto cancelRequest(Long userId, Long requestId) {
         ParticipationRequest request = participationRequestRepository.findByIdAndRequesterId(requestId, userId)
@@ -70,6 +74,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         return requestMapper.convertToParticipationRequestDto(participationRequestRepository.save(request));
     }
 
+    @Transactional
     @Override
     public EventRequestStatusUpdateResult updateEventRequests(
             Long userId, Long eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.EndpointHitDto;
 import ru.practicum.StatsClient;
 import ru.practicum.ViewStatsDto;
@@ -37,6 +38,7 @@ import static ru.practicum.event.repository.EventRepository.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
@@ -46,7 +48,7 @@ public class EventServiceImpl implements EventService {
     private final StatsClient statsClient;
     private final ObjectMapper objectMapper;
 
-
+    @Transactional
     @Override
     public EventFullDto create(Long userId, NewEventDto newEventDto) {
         Event event = eventMapper.convertToEvent(newEventDto);
@@ -58,6 +60,7 @@ public class EventServiceImpl implements EventService {
         return eventMapper.convertToEventFullDto(eventRepository.save(event));
     }
 
+    @Transactional
     @Override
     public EventFullDto updateAdminEvent(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         Event event = getEventById(eventId);
@@ -87,6 +90,7 @@ public class EventServiceImpl implements EventService {
         return eventMapper.convertToEventFullDto(eventRepository.save(event));
     }
 
+    @Transactional
     @Override
     public EventFullDto updateUserEventById(Long eventId, Long userId, UpdateEventUserRequest updateEventUserRequest) {
         Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)

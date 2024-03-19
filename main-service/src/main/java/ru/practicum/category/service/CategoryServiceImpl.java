@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
 import ru.practicum.category.mapper.CategoryMapper;
@@ -21,13 +22,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final EventRepository eventRepository;
 
-
+    @Transactional
     @Override
     public CategoryDto create(NewCategoryDto newCategoryDto) {
         Category category = categoryMapper.convertToCategory(newCategoryDto);
@@ -41,6 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.convertToCategoryDto(category);
     }
 
+    @Transactional
     @Override
     public CategoryDto update(Long categoryId, NewCategoryDto newCategoryDto) {
         Category category = getCategoryId(categoryId);
@@ -63,6 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.convertToCategoryDto(category);
     }
 
+    @Transactional
     @Override
     public void delete(Long categoryId) {
         Category category = getCategoryId(categoryId);
