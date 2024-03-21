@@ -129,7 +129,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventShortDto> getUserEvents(Long userId, int from, int size) {
-        Pageable page = PageRequest.of(from / size, size, Sort.by("id").descending());
+        Pageable page = PageRequest.of(from / size, size, Sort.by("id").ascending());
 
         return eventRepository.findAllByInitiatorId(userId, page).stream()
                 .map(eventMapper::convertToEventShortDto)
