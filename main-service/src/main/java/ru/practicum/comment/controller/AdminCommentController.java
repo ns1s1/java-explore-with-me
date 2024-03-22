@@ -18,14 +18,13 @@ public class AdminCommentController {
     private final CommentService commentService;
 
     @GetMapping("/{commentId}")
-
     public CommentDto getCommentByAdmin(@PathVariable Long commentId) {
 
         return commentService.getCommentByAdmin(commentId);
     }
 
     @GetMapping
-    public List<CommentDto> getCommentsByEventid(@RequestParam Long eventId,
+    public List<CommentDto> getCommentsByEventId(@RequestParam Long eventId,
                                                  @RequestParam(name = "from", defaultValue = "0") int from,
                                                  @RequestParam(name = "size", defaultValue = "10") int size) {
 

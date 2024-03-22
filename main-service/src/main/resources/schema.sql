@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS comments (
     text VARCHAR(1000) NOT NULL,
     author_id BIGINT NOT NULL,
     event_id BIGINT NOT NULL,
-    created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    created TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_comments_to_users FOREIGN KEY (author_id) REFERENCES users(id),
     CONSTRAINT fk_requests_to_events FOREIGN KEY (event_id) REFERENCES events(id)
 );

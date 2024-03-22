@@ -25,7 +25,7 @@ public class PrivateCommentController {
     }
 
     @GetMapping("/{commentId}")
-    public CommentDto getUserCommentByid(@PathVariable Long userId, @PathVariable Long commentId) {
+    public CommentDto getUserCommentById(@PathVariable Long userId, @PathVariable Long commentId) {
 
         return commentService.getUserCommentById(userId, commentId);
     }

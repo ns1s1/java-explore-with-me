@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.comment.dto.CommentDto;
 import ru.practicum.comment.dto.NewCommentDto;
 import ru.practicum.comment.mapper.CommentMapper;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
@@ -31,6 +33,7 @@ public class CommentServiceImpl implements CommentService {
     private final EventRepository eventRepository;
 
 
+    @Transactional
     @Override
     public CommentDto create(Long userId, Long eventId, NewCommentDto newCommentDto) {
         User author = getUserById(userId);
@@ -76,6 +79,7 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.convertToCommentDto(comment);
     }
 
+    @Transactional
     @Override
     public void deleteComment(Long commentId, Long userId) {
         getUserById(userId);
@@ -85,6 +89,7 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(comment);
     }
 
+    @Transactional
     @Override
     public void deleteCommentByAdmin(Long commentId) {
         getCommentById(commentId);
@@ -102,6 +107,7 @@ public class CommentServiceImpl implements CommentService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public CommentDto updateComment(Long commentId, Long userId, NewCommentDto newCommentDto) {
         Comment comment = getCommentById(commentId);
@@ -113,6 +119,7 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.convertToCommentDto(commentRepository.save(comment));
     }
 
+    @Transactional
     @Override
     public CommentDto updateCommentByAdmin(Long commentId, NewCommentDto newCommentDto) {
         Comment comment = getCommentById(commentId);

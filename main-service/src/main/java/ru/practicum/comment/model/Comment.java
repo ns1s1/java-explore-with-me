@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Table(name = "comments")
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = {"author", "event"})
+@ToString(exclude = "event")
 public class Comment {
 
     @Id
@@ -23,7 +23,7 @@ public class Comment {
 
     private String text;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User author;
 
     @ManyToOne(fetch = FetchType.LAZY)
